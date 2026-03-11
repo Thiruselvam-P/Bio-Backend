@@ -1,0 +1,10 @@
+DATABASE: admin
+  COLLECTION: system.version, COUNT: 1
+DATABASE: config
+  COLLECTION: system.sessions, COUNT: 0
+DATABASE: local
+  COLLECTION: startup_log, COUNT: 1
+DATABASE: mj-fresh-bio
+  COLLECTION: users, COUNT: 2
+  COLLECTION: products, COUNT: 0
+  COLLECTION: orders, COUNT: 0

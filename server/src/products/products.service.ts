@@ -25,9 +25,16 @@ export class ProductsService {
     }
 
     async findOne(id: string): Promise<ProductDocument> {
-        const product = await this.productModel.findById(id).exec();
+        let product;
+        if (id.match(/^[0-9a-fA-F]{24}$/)) {
+            product = await this.productModel.findById(id).exec();
+        } else {
+            // Fallback to finding by name if it's not a valid ObjectId
+            product = await this.productModel.findOne({ productName: id }).exec();
+        }
+
         if (!product) {
-            throw new NotFoundException(`Product with ID ${id} not found`);
+            throw new NotFoundException(`Product with ID or Name "${id}" not found`);
         }
         return product;
     }

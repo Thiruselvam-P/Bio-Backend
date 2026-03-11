@@ -36,11 +36,22 @@ export class OrdersService {
     }
 
     async findAll(): Promise<OrderDocument[]> {
-        return this.orderModel.find().populate('userId', 'name email').populate('productId').exec();
+        return this.orderModel.find().populate('userId', 'name email role').populate('productId').exec();
     }
 
     async findMyOrders(userId: string): Promise<OrderDocument[]> {
-        return this.orderModel.find({ userId }).populate('productId').exec();
+        return this.orderModel.find({ userId }).populate('userId', 'name email role').populate('productId').exec();
+    }
+
+    async findOne(id: string): Promise<OrderDocument> {
+        const order = await this.orderModel.findById(id)
+            .populate('userId', 'name email role')
+            .populate('productId')
+            .exec();
+        if (!order) {
+            throw new NotFoundException(`Order with ID ${id} not found`);
+        }
+        return order;
     }
 
     async updateStatus(id: string, updateOrderStatusDto: UpdateOrderStatusDto): Promise<OrderDocument> {
@@ -74,7 +85,7 @@ export class OrdersService {
 
         const orders = await this.orderModel.find({
             createdAt: { $gte: start, $lte: end }
-        }).populate('productId').exec();
+        }).populate('productId').populate('userId', 'name email').exec();
 
         const totalOrders = orders.length;
         const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
@@ -87,6 +98,9 @@ export class OrdersService {
             totalProducts,
             orders: orders.map(o => ({
                 id: (o as any)._id,
+                orderId: o.orderId,
+                user: (o.userId as any)?.name || 'Unknown User',
+                email: (o.userId as any)?.email || 'N/A',
                 product: (o.productId as any)?.productName || 'Deleted Product',
                 quantity: o.quantity,
                 amount: o.totalAmount,

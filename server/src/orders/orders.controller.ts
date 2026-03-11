@@ -20,13 +20,13 @@ export class OrdersController {
     constructor(private readonly ordersService: OrdersService) { }
 
     @Post()
-    @Roles('USER')
+    @Roles('USER', 'ADMIN')
     async create(@Request() req, @Body() createOrderDto: CreateOrderDto) {
         return this.ordersService.create(req.user.userId, createOrderDto);
     }
 
     @Get('my-orders')
-    @Roles('USER')
+    @Roles('USER', 'ADMIN')
     async findMyOrders(@Request() req) {
         return this.ordersService.findMyOrders(req.user.userId);
     }
@@ -47,6 +47,11 @@ export class OrdersController {
     @Roles('ADMIN')
     async getSalesReport(@Param('date') date: string) {
         return this.ordersService.getSalesByDate(date);
+    }
+
+    @Get(':id')
+    async findOne(@Param('id') id: string) {
+        return this.ordersService.findOne(id);
     }
 
     @Put(':id/status')
