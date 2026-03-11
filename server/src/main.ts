@@ -7,7 +7,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS
-  app.enableCors();
+  const allowedOrigins = [
+    process.env.FRONTEND_URL || 'https://bio-client.vercel.app',
+    'http://localhost:4200',
+  ];
+  app.enableCors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  });
 
   // Global Validation Pipe
   app.useGlobalPipes(
