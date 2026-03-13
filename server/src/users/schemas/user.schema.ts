@@ -19,6 +19,12 @@ export class User {
 
     @Prop({ default: 'USER', enum: ['ADMIN', 'USER'] })
     role: string;
+
+    @Prop()
+    resetToken?: string;
+
+    @Prop()
+    resetTokenExpiry?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
