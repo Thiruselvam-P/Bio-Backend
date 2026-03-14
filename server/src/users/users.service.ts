@@ -49,4 +49,12 @@ export class UsersService {
             $unset: { resetToken: 1, resetTokenExpiry: 1 },
         }).exec();
     }
+
+    async update(id: string, updateData: any): Promise<UserDocument | null> {
+        return this.userModel.findByIdAndUpdate(id, updateData, { new: true }).exec();
+    }
+
+    async remove(id: string): Promise<any> {
+        return this.userModel.findByIdAndDelete(id).exec();
+    }
 }
